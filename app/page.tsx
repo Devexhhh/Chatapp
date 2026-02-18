@@ -16,9 +16,8 @@ export default function Home() {
   const [users, setUsers] = useState<string[]>([]);
   const [input, setInput] = useState("");
 
-  //
+
   // Connect exactly once
-  //
   useEffect(() => {
 
     if (wsRef.current) return;
@@ -38,25 +37,21 @@ export default function Home() {
 
       console.log("📩 Server:", data);
 
-      //
+
       // Room created → creator joined automatically
-      //
       if (data.type === "room_created") {
         setRoomId(data.roomId);
         setJoined(true);
       }
 
-      //
+
       // Join acknowledgement
-      //
       if (data.type === "joined") {
         console.log("✅ Join confirmed");
         setJoined(true);
       }
 
-      //
       // Chat message
-      //
       if (data.type === "message") {
         setMessages(prev => [
           ...prev,
@@ -64,9 +59,8 @@ export default function Home() {
         ]);
       }
 
-      //
       // System message
-      //
+
       if (data.type === "system") {
         setMessages(prev => [
           ...prev,
@@ -74,16 +68,12 @@ export default function Home() {
         ]);
       }
 
-      //
       // Presence update
-      //
       if (data.type === "presence") {
         setUsers(data.users);
       }
 
-      //
       // Error handling
-      //
       if (data.type === "error") {
         alert(data.message);
       }
@@ -121,9 +111,7 @@ export default function Home() {
     wsRef.current.send(JSON.stringify(data));
   }
 
-  //
   // Create room
-  //
   function createRoom() {
 
     if (!username.trim()) return;
@@ -135,9 +123,7 @@ export default function Home() {
 
   }
 
-  //
   // Join room
-  //
   function joinRoom() {
 
     if (!username.trim()) return;
@@ -151,9 +137,7 @@ export default function Home() {
 
   }
 
-  //
   // Send chat message
-  //
   function sendMessage() {
 
     if (!connected) return;
