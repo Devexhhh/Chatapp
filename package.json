@@ -2,9 +2,8 @@
   "name": "websocket-chat",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "ts-node server.ts",
+    "dev": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" server.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
