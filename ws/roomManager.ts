@@ -1,17 +1,13 @@
 import { WebSocket } from "ws";
 
-//
 // Extend WebSocket
-//
 export interface CustomWebSocket extends WebSocket {
     roomId?: string;
     username?: string;
     isAlive?: boolean;
 }
 
-//
 // Client metadata
-//
 interface ClientMeta {
     username: string;
     roomId: string;
@@ -20,18 +16,14 @@ interface ClientMeta {
 
 const clientMeta = new Map<CustomWebSocket, ClientMeta>();
 
-//
 // Room structure
-//
 interface Room {
     clients: Set<CustomWebSocket>;
 }
 
 const rooms = new Map<string, Room>();
 
-//
 // Helpers
-//
 function generateRoomId(): string {
     return Math.random().toString(36).substring(2, 8);
 }
@@ -52,9 +44,7 @@ function getRoomUsers(room: Room): string[] {
         .filter(Boolean) as string[];
 }
 
-//
 // Message handler
-//
 export function handleMessage(ws: CustomWebSocket, raw: string) {
 
     let data: any;
@@ -65,9 +55,7 @@ export function handleMessage(ws: CustomWebSocket, raw: string) {
         return;
     }
 
-    //
     // CREATE ROOM
-    //
     if (data.type === "create") {
 
         const roomId = generateRoomId();
@@ -98,9 +86,8 @@ export function handleMessage(ws: CustomWebSocket, raw: string) {
         });
     }
 
-    //
+
     // JOIN ROOM
-    //
     else if (data.type === "join") {
 
         const room = rooms.get(data.roomId);
@@ -151,9 +138,7 @@ export function handleMessage(ws: CustomWebSocket, raw: string) {
         });
     }
 
-    //
     // MESSAGE
-    //
     else if (data.type === "message") {
 
         if (!ws.roomId) return;
