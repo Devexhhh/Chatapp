@@ -113,14 +113,13 @@ export function handleMessage(ws: CustomWebSocket, raw: string) {
             return;
         }
 
-        // 🚨 Prevent duplicate join
         const existingMeta = clientMeta.get(ws);
 
         if (existingMeta && existingMeta.roomId === data.roomId) {
-            console.log("User already in room, ignoring duplicate join");
             return;
         }
 
+        // Add client to room
         room.clients.add(ws);
 
         ws.roomId = data.roomId;
@@ -132,16 +131,26 @@ export function handleMessage(ws: CustomWebSocket, raw: string) {
             joinedAt: Date.now()
         });
 
+        // 🔥 THIS IS THE CRITICAL FIX
+        // Send direct join acknowledgment
+        ws.send(JSON.stringify({
+            type: "joined",
+            roomId: data.roomId
+        }));
+
+        // Broadcast system message
         broadcast(room, {
             type: "system",
             message: `${ws.username} joined`
         });
 
+        // Broadcast presence
         broadcast(room, {
             type: "presence",
             users: getRoomUsers(room)
         });
     }
+
     //
     // MESSAGE
     //
