@@ -2,6 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 
+interface PresencePayload {
+  type: "presence";
+  users: string[];
+}
+
 export default function Home() {
 
   const wsRef = useRef<WebSocket | null>(null);
@@ -10,8 +15,12 @@ export default function Home() {
   const [username, setUsername] = useState("");
   const [roomId, setRoomId] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
+  const [users, setUsers] = useState<string[]>([]);
   const [input, setInput] = useState("");
 
+  //
+  // Connect once
+  //
   useEffect(() => {
 
     const ws = new WebSocket("ws://localhost:3000/ws");
@@ -25,9 +34,9 @@ export default function Home() {
 
     ws.onmessage = (event) => {
 
-      console.log("📩 Server:", event.data);
-
       const data = JSON.parse(event.data);
+
+      console.log("📩 Server:", data);
 
       if (data.type === "room_created") {
         setRoomId(data.roomId);
@@ -36,7 +45,7 @@ export default function Home() {
       if (data.type === "message") {
         setMessages(prev => [
           ...prev,
-          `${data.username}: ${data.message}`
+          `[${new Date().toLocaleTimeString()}] ${data.username}: ${data.message}`
         ]);
       }
 
@@ -47,6 +56,9 @@ export default function Home() {
         ]);
       }
 
+      if (data.type === "presence") {
+        setUsers(data.users);
+      }
     };
 
     ws.onclose = () => {
@@ -58,7 +70,9 @@ export default function Home() {
 
   }, []);
 
-
+  //
+  // Safe send
+  //
   function send(data: any) {
 
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
@@ -70,6 +84,8 @@ export default function Home() {
   }
 
   function createRoom() {
+    if (!username.trim()) return;
+
     send({
       type: "create",
       username
@@ -77,6 +93,8 @@ export default function Home() {
   }
 
   function joinRoom() {
+    if (!username.trim() || !roomId.trim()) return;
+
     send({
       type: "join",
       roomId,
@@ -85,6 +103,7 @@ export default function Home() {
   }
 
   function sendMessage() {
+    if (!input.trim()) return;
 
     send({
       type: "message",
@@ -96,50 +115,68 @@ export default function Home() {
 
   return (
 
-    <div style={{ padding: 20 }}>
+    <div style={{ padding: 20, display: "flex", gap: 40 }}>
 
-      <h1>Realtime Chat</h1>
+      <div style={{ flex: 2 }}>
 
-      <input
-        placeholder="Username"
-        value={username}
-        onChange={e => setUsername(e.target.value)}
-      />
+        <h1>Realtime Chat</h1>
 
-      <br /><br />
+        <input
+          placeholder="Username"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+        />
 
-      <button onClick={createRoom} disabled={!connected}>
-        Create Room
-      </button>
+        <br /><br />
 
-      <br /><br />
+        <button onClick={createRoom} disabled={!connected}>
+          Create Room
+        </button>
 
-      <input
-        placeholder="Room ID"
-        value={roomId}
-        onChange={e => setRoomId(e.target.value)}
-      />
+        <br /><br />
 
-      <button onClick={joinRoom} disabled={!connected}>
-        Join Room
-      </button>
+        <input
+          placeholder="Room ID"
+          value={roomId}
+          onChange={e => setRoomId(e.target.value)}
+        />
 
-      <hr />
+        <button onClick={joinRoom} disabled={!connected}>
+          Join Room
+        </button>
 
-      {messages.map((msg, i) => (
-        <div key={i}>{msg}</div>
-      ))}
+        <hr />
 
-      <br />
+        <div style={{ minHeight: 200 }}>
+          {messages.map((msg, i) => (
+            <div key={i}>{msg}</div>
+          ))}
+        </div>
 
-      <input
-        value={input}
-        onChange={e => setInput(e.target.value)}
-      />
+        <br />
 
-      <button onClick={sendMessage} disabled={!connected}>
-        Send
-      </button>
+        <input
+          value={input}
+          onChange={e => setInput(e.target.value)}
+        />
+
+        <button onClick={sendMessage} disabled={!connected}>
+          Send
+        </button>
+
+      </div>
+
+      <div style={{ flex: 1 }}>
+
+        <h3>Users in Room</h3>
+
+        {users.length === 0 && <div>No users</div>}
+
+        {users.map((user, i) => (
+          <div key={i}>• {user}</div>
+        ))}
+
+      </div>
 
     </div>
 
