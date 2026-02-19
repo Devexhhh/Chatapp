@@ -3,6 +3,7 @@ import next from "next";
 import { WebSocketServer } from "ws";
 import { attachWebSocketHandlers } from "./ws/wsHandler";
 
+const PORT = process.env.PORT || 3000;
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -31,8 +32,8 @@ app.prepare().then(() => {
 
     });
 
-    server.listen(3000, () => {
-        console.log("Server running at http://localhost:3000");
+    server.listen(PORT, "0.0.0.0", () => {
+        console.log("Server running on port", PORT);
     });
 
 });
