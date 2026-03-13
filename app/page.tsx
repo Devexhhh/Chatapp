@@ -25,7 +25,7 @@ export default function Home() {
 
     if (wsRef.current) return;
 
-    const ws = new WebSocket("https://column-learners-brief-eau.trycloudflare.com");
+    const ws = new WebSocket("https://batch-compaq-loading-key.trycloudflare.com");
 
     wsRef.current = ws;
 
