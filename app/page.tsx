@@ -25,7 +25,7 @@ export default function Home() {
 
     if (wsRef.current) return;
 
-    const ws = new WebSocket("https://vendor-gps-coupons-buying.trycloudflare.com");
+    const ws = new WebSocket("wss://vendor-gps-coupons-buying.trycloudflare.com/ws");
 
     wsRef.current = ws;
 
