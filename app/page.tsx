@@ -18,14 +18,13 @@ export default function Home() {
   const [messages, setMessages] = useState<{ type: string, username?: string, message: string, time?: string }[]>([]);
   const [users, setUsers] = useState<string[]>([]);
   const [input, setInput] = useState("");
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Connect exactly once
   useEffect(() => {
 
     if (wsRef.current) return;
 
-    const ws = new WebSocket("wss://vendor-gps-coupons-buying.trycloudflare.com/ws");
+    const ws = new WebSocket("ws://localhost:3000/ws");
 
     wsRef.current = ws;
 
@@ -94,10 +93,6 @@ export default function Home() {
 
   }, []);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
   // Safe send helper
   function send(data: any) {
     if (!wsRef.current) return;
@@ -125,10 +120,12 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen overflow-hidden relative bg-[#05000a] text-white selection:bg-violet-500/30 font-sans flex flex-col items-center justify-start pt-12 sm:pt-25 px-4 sm:px-8">
+    <div className="min-h-screen relative bg-[#05000a] text-white selection:bg-violet-500/30 font-sans flex flex-col items-center justify-center py-10 sm:py-16 px-4 sm:px-8">
       {/* Background radial highlights */}
-      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-violet-900/15 blur-[120px] rounded-full point-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-900/15 blur-[120px] rounded-full point-events-none" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-1/3 -left-1/4 w-2/3 sm:w-1/2 aspect-square bg-violet-900/20 blur-[140px] rounded-full" />
+        <div className="absolute -bottom-1/3 -right-1/4 w-2/3 sm:w-1/2 aspect-square bg-purple-900/25 blur-[160px] rounded-full" />
+      </div>
 
       {!joined ? (
         <JoinScreen
@@ -141,7 +138,7 @@ export default function Home() {
           joinRoom={joinRoom}
         />
       ) : (
-        <div className="w-full max-w-7xl h-full max-h-[850px] flex gap-6 relative z-10 animate-fade-in shadow-2xl mt-4 sm:mt-0 py-2 sm:py-0">
+        <div className="w-full max-w-6xl h-[72vh] sm:h-[78vh] max-h-[880px] flex flex-col lg:flex-row gap-4 sm:gap-6 relative z-10 animate-fade-in shadow-2xl mt-4 sm:mt-0 py-2 sm:py-0">
 
           <ChatArea
             roomId={roomId}
@@ -151,7 +148,6 @@ export default function Home() {
             setInput={setInput}
             connected={connected}
             sendMessage={sendMessage}
-            messagesEndRef={messagesEndRef}
           />
 
           <Sidebar users={users} username={username} />
