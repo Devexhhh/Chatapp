@@ -1,4 +1,4 @@
-import { ReactElement, RefObject } from "react";
+import { ReactElement, useEffect, useRef } from "react";
 import { Lock, User, MessageSquareDashed, Zap, Send } from "lucide-react";
 
 export interface Message {
@@ -16,7 +16,6 @@ interface ChatAreaProps {
   setInput: (i: string) => void;
   connected: boolean;
   sendMessage: () => void;
-  messagesEndRef: RefObject<HTMLDivElement | null>;
 }
 
 export function ChatArea({
@@ -26,9 +25,16 @@ export function ChatArea({
   input,
   setInput,
   connected,
-  sendMessage,
-  messagesEndRef
+  sendMessage
 }: ChatAreaProps) {
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const el = messagesContainerRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+  }, [messages]);
+
   return (
     <div className="flex-1 h-full min-h-0 glass-panel rounded-3xl flex flex-col overflow-hidden">
       <div className="px-6 py-4 border-b border-violet-500/20 bg-black/40 flex items-center justify-between backdrop-blur-md shrink-0">
@@ -45,7 +51,10 @@ export function ChatArea({
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto p-6 space-y-6 scrollbar-hide">
+      <div
+        ref={messagesContainerRef}
+        className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 space-y-6 scrollbar-hide"
+      >
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-violet-500/40 space-y-3 object-center">
             <MessageSquareDashed className="w-16 h-16 opacity-30" />
@@ -84,7 +93,6 @@ export function ChatArea({
             </div>
           );
         })}
-        <div ref={messagesEndRef} />
       </div>
 
       <div className="p-5 bg-black/40 border-t border-violet-500/20 backdrop-blur-md rounded-b-3xl">
