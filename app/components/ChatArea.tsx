@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Lock, User, MessageSquareDashed, Zap, Send } from "lucide-react";
 
 export interface Message {
@@ -39,7 +39,7 @@ export function ChatArea({
     <div className="flex-1 h-full min-h-0 glass-panel rounded-3xl flex flex-col overflow-hidden">
       <div className="px-6 py-4 border-b border-violet-500/20 bg-black/40 flex items-center justify-between backdrop-blur-md shrink-0">
         <div>
-          <h2 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-400">
+          <h2 className="text-xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-violet-400 to-fuchsia-400">
             Room: {roomId}
           </h2>
           <p className="flex items-center gap-1.5 text-xs text-gray-400 mt-1 font-medium">
@@ -83,8 +83,8 @@ export function ChatArea({
                 <span className="text-[10px] text-gray-500 font-medium">{msg.time}</span>
               </div>
               <div className={`px-5 py-3 rounded-2xl max-w-[80%] text-sm shadow-md leading-relaxed
-                ${isMe 
-                  ? 'bg-gradient-to-br from-violet-600 to-violet-800 text-white rounded-tr-sm border border-violet-400/30' 
+                ${isMe
+                  ? 'bg-linear-to-br from-violet-600 to-violet-800 text-white rounded-tr-sm border border-violet-400/30'
                   : 'bg-black/40 text-gray-200 rounded-tl-sm border border-violet-500/20 backdrop-blur-md'
                 }`}
               >
@@ -96,7 +96,7 @@ export function ChatArea({
       </div>
 
       <div className="p-5 bg-black/40 border-t border-violet-500/20 backdrop-blur-md rounded-b-3xl">
-        <form 
+        <form
           onSubmit={e => { e.preventDefault(); sendMessage(); }}
           className="flex gap-3"
         >
