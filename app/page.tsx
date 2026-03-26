@@ -138,7 +138,7 @@ export default function Home() {
           joinRoom={joinRoom}
         />
       ) : (
-        <div className="w-full max-w-6xl h-[72vh] sm:h-[78vh] max-h-[880px] flex flex-col lg:flex-row gap-4 sm:gap-6 relative z-10 animate-fade-in shadow-2xl mt-4 sm:mt-0 py-2 sm:py-0">
+        <div className="w-full max-w-6xl h-[72vh] sm:h-[78vh] max-h-220 flex flex-col lg:flex-row gap-4 sm:gap-6 relative z-10 animate-fade-in shadow-2xl mt-4 sm:mt-0 py-2 sm:py-0">
 
           <ChatArea
             roomId={roomId}
